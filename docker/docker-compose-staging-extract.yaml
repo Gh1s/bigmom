@@ -1,0 +1,28 @@
+﻿# This script can be used to bootstrap the extract job on the staging environment.
+
+version: "3.8"
+
+services:
+
+  bigmom-job-extract:
+    user: $UID:$GID
+    image: repository.csb.nc:5011/bigmom/jobs/extract:${JOB_EXTRACT_TAG:-latest}
+    volumes:
+      - type: bind
+        source: /csb/bigmom/job-extract/SITPE.accdb
+        target: /tmp/SITPE.accdb
+      - type: bind
+        source: /csb/bigmom/job-extract/out/
+        target: /tmp/out/
+      - type: bind
+        source: /csb/bigmom/job-extract/exporttojson_0_1/contexts/Default.properties
+        target: /talend/Enchainement_v2/bom_tpe/exporttojson_0_1/contexts/Default.properties
+      - type: bind
+        source: /csb/bigmom/job-extract/getdatafromsource_v3_0_1/contexts/Default.properties
+        target: /talend/Enchainement_v2/bom_tpe/getdatafromsource_v3_0_1/contexts/Default.properties
+    restart: "no"
+
+networks:
+  default:
+    external:
+      name: intranet

@@ -1,0 +1,103 @@
+variables:
+  FF_NETWORK_PER_BUILD: "true"
+  DOCKER_HOST: tcp://docker:2375
+  DOCKER_TLS_CERTDIR: ""
+  HTTP_PROXY: http://192.168.139.10:3128
+  HTTPS_PROXY: http://192.168.139.10:3128
+  NO_PROXY: docker,repository.csb.nc
+
+services:
+  - name: docker:dind
+
+stages:
+  - tests
+  - build_dev
+  - build_prod
+  - deploy_staging
+
+tests:
+  image: mcr.microsoft.com/dotnet/sdk:5.0.301-buster-slim
+  stage: tests
+  before_script:
+    - curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+    - chmod +x /usr/local/bin/docker-compose
+    - KAFKA_ADV_HOST=$(cat /etc/hosts | grep docker | awk '{print $1}') docker-compose -f $CI_PROJECT_DIR/docker/docker-compose-ci.yaml up -d
+  script:
+    - ADDRESS=$(cat /etc/hosts | grep docker | awk '{print $1}') BIGMOM_POSTGRES_HOST=$ADDRESS BIGMOM_ELASTICSEARCH_HOST=$ADDRESS BIGMOM_KAFKA_HOST=$ADDRESS BIGMOM_ACE_HOST=$ADDRESS dotnet test
+  after_script:
+    - docker-compose -f $CI_PROJECT_DIR/docker/docker-compose-ci.yaml down -v
+
+build_dev:
+  image: mcr.microsoft.com/dotnet/sdk:5.0.301-buster-slim
+  stage: build_dev
+  dependencies:
+    - tests
+  script:
+    - mkdir -p /etc/apt/apt.conf.d/
+    - echo "Acquire::http::Proxy \"$HTTP_PROXY\";\nAcquire::https::Proxy \"$HTTPS_PROXY\";" > /etc/apt/apt.conf.d/proxy.conf
+    - apt update && apt install ca-certificates curl gnupg lsb-release -y
+    - curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+    - echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
+    - apt update && apt install docker-ce-cli -y
+    - curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+    - chmod +x /usr/local/bin/docker-compose
+    - cd $CI_PROJECT_DIR/docker/
+    - chmod +x build.sh
+    - ./build.sh -p
+  except:
+    - master
+
+build_prod:
+  image: mcr.microsoft.com/dotnet/sdk:5.0.301-buster-slim
+  stage: build_prod
+  dependencies:
+    - tests
+  script:
+    - mkdir -p /etc/apt/apt.conf.d/
+    - echo "Acquire::http::Proxy \"$HTTP_PROXY\";\nAcquire::https::Proxy \"$HTTPS_PROXY\";" > /etc/apt/apt.conf.d/proxy.conf
+    - apt update && apt install ca-certificates curl gnupg lsb-release -y
+    - curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+    - echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
+    - apt update && apt install docker-ce-cli -y
+    - curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+    - chmod +x /usr/local/bin/docker-compose
+    - cd $CI_PROJECT_DIR/docker/
+    - chmod +x build.sh
+    - ./build.sh -s -p
+  only:
+    - master
+
+deploy_staging:
+  image: debian:buster
+  stage: deploy_staging
+  dependencies:
+    - build_dev
+  before_script:
+    - mkdir -p /etc/apt/apt.conf.d/
+    - echo "Acquire::http::Proxy \"$HTTP_PROXY\";\nAcquire::https::Proxy \"$HTTPS_PROXY\";" > /etc/apt/apt.conf.d/proxy.conf
+    - apt update && apt install openssh-client -y
+    - eval $(ssh-agent -s) && mkdir -p ~/.ssh && echo "$BIGMOM_SSH_PRIVATE_KEY" | ssh-add -
+  script:
+    - scp -o StrictHostKeyChecking=no $CI_PROJECT_DIR/docker/docker-compose-staging-extract.yaml bigmom@192.168.201.171:/csb/bigmom/docker-compose-extract.yaml
+    - scp -o StrictHostKeyChecking=no $CI_PROJECT_DIR/docker/docker-compose-staging-collector.yaml bigmom@192.168.201.171:/csb/bigmom/docker-compose-collector.yaml
+    - scp -o StrictHostKeyChecking=no $CI_PROJECT_DIR/docker/docker-compose-staging-integration.yaml bigmom@192.168.201.171:/csb/bigmom/docker-compose-integration.yaml
+    - scp -o StrictHostKeyChecking=no $CI_PROJECT_DIR/docker/docker-compose-staging-app.yaml bigmom@192.168.201.171:/csb/bigmom/docker-compose-app.yaml
+    - scp -o StrictHostKeyChecking=no $CI_PROJECT_DIR/docker/docker-compose-staging-spread-jobs.yaml bigmom@192.168.201.171:/csb/bigmom/docker-compose-spread-jobs.yaml
+    - scp -o StrictHostKeyChecking=no $CI_PROJECT_DIR/docker/job-extract/exporttojson_0_1/contexts/Staging.properties bigmom@192.168.201.171:/csb/bigmom/job-extract/exporttojson_0_1/contexts/Default.properties
+    - scp -o StrictHostKeyChecking=no $CI_PROJECT_DIR/docker/job-extract/getdatafromsource_v3_0_1/contexts/Staging.properties bigmom@192.168.201.171:/csb/bigmom/job-extract/getdatafromsource_v3_0_1/contexts/Default.properties
+    - scp -o StrictHostKeyChecking=no $CI_PROJECT_DIR/docker/job-collector/config.staging.yaml bigmom@192.168.201.171:/csb/bigmom/job-collector/config.yaml
+    - scp -o StrictHostKeyChecking=no $CI_PROJECT_DIR/docker/job-integration/appsettings.Staging.json bigmom@192.168.201.171:/csb/bigmom/job-integration/appsettings.Staging.json
+    - scp -o StrictHostKeyChecking=no $CI_PROJECT_DIR/docker/api/appsettings.Staging.json bigmom@192.168.201.171:/csb/bigmom/api/appsettings.Staging.json
+    - scp -o StrictHostKeyChecking=no $CI_PROJECT_DIR/docker/app/appsettings.Staging.json bigmom@192.168.201.171:/csb/bigmom/app/appsettings.Staging.json
+    - scp -o StrictHostKeyChecking=no $CI_PROJECT_DIR/docker/nginx/nginx.staging.conf bigmom@192.168.201.171:/csb/bigmom/nginx/nginx.conf
+    - scp -o StrictHostKeyChecking=no $CI_PROJECT_DIR/data/insert_mcc.sql bigmom@192.168.201.171:/csb/bigmom/job-integration/data/insert_mcc.sql
+    - scp -o StrictHostKeyChecking=no $CI_PROJECT_DIR/docker/job-spread-pwc/config.staging.yaml bigmom@192.168.201.171:/csb/bigmom/job-spread-pwc/config.yaml
+    - scp -o StrictHostKeyChecking=no $CI_PROJECT_DIR/docker/job-spread-amx/appsettings.Staging.json bigmom@192.168.201.171:/csb/bigmom/job-spread-amx/appsettings.Staging.json
+    - scp -o StrictHostKeyChecking=no $CI_PROJECT_DIR/docker/job-spread-jcb/config.staging.yaml bigmom@192.168.201.171:/csb/bigmom/job-spread-jcb/config.yaml
+    - ssh -o StrictHostKeyChecking=no bigmom@192.168.201.171 "docker-compose --env-file /csb/bigmom/.env -f /csb/bigmom/docker-compose-extract.yaml -f /csb/bigmom/docker-compose-collector.yaml -f /csb/bigmom/docker-compose-integration.yaml -f /csb/bigmom/docker-compose-app.yaml -f /csb/bigmom/docker-compose-spread-jobs.yaml down -v "
+    - ssh -o StrictHostKeyChecking=no bigmom@192.168.201.171 "docker-compose -f /csb/bigmom/docker-compose-extract.yaml -f /csb/bigmom/docker-compose-collector.yaml -f /csb/bigmom/docker-compose-integration.yaml -f /csb/bigmom/docker-compose-app.yaml -f /csb/bigmom/docker-compose-spread-jobs.yaml pull"
+    - ssh -o StrictHostKeyChecking=no bigmom@192.168.201.171 "docker image prune -f"
+    - ssh -o StrictHostKeyChecking=no bigmom@192.168.201.171 "docker-compose --env-file /csb/bigmom/.env -f /csb/bigmom/docker-compose-integration.yaml -f /csb/bigmom/docker-compose-app.yaml -f /csb/bigmom/docker-compose-spread-jobs.yaml up -d"
+  only:
+    - develop
+    - feat/FTPE175

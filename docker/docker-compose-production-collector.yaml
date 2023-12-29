@@ -1,0 +1,24 @@
+﻿# This script can be used to bootstrap the collector job on the staging environment.
+
+version: "3.8"
+
+services:
+
+  bigmom-job-collector:
+    user: $UID:$GID
+    image: repository.csb.nc:5011/bigmom/jobs/collector:${JOB_COLLECTOR_TAG:-latest}
+    environment:
+      - CONFIG_PATH=/scripts/collector/config/config.yaml
+    volumes:
+      - type: bind
+        source: /csb/bigmom/job-collector/config.yaml
+        target: /scripts/collector/config/config.yaml
+      - type: bind
+        source: /csb/bigmom/job-extract/out/
+        target: /scripts/collector/files/
+    restart: "no"
+
+networks:
+  default:
+    external:
+      name: intranet

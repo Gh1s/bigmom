@@ -1,0 +1,74 @@
+<div class="bg-white">
+    <div class="mx-auto pt-3 px-2 sm:px-2">
+
+        <div class="flex flex-nowrap grid grid-cols-1 gap-y-1 ml-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 xl:gap-x-4">
+            <div class="w-full aspect-w-1 h-14 bg-gray-200 rounded-lg overflow-hidden xl:aspect-w-11/12 xl:h-16">
+                <mat-form-field appearance="fill" class="w-full h-full object-center object-cover group-hover:opacity-75">
+                    <mat-label style="color: black">Veuillez entrer une date</mat-label>
+                    <mat-date-range-input [formGroup]="range" [rangePicker]="picker" class="text-black">
+                        <input id="start-date" type="text" matStartDate formControlName="start" placeholder="Start date">
+                        <input id="end-date" type="text" matEndDate formControlName="end" placeholder="End date">
+                    </mat-date-range-input>
+                    <mat-datepicker-toggle style="color: black" matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-date-range-picker #picker></mat-date-range-picker>
+                </mat-form-field>
+            </div>
+
+            <div class="w-full aspect-w-1 h-14 bg-white rounded-lg overflow-hidden xl:aspect-w-11/12 xl:h-16">
+                <mat-form-field appearance="outline" class="w-full h-full bg-gray-200 object-center object-cover ">
+                    <mat-label class="text-black">
+                        Applications
+                    </mat-label>
+                    <mat-select [formControl]="applications" multiple>
+                        <mat-select-trigger class="text-black">
+                            {{applications.value ? applications.value[0] : ''}}
+                            <span *ngIf="applications.value?.length > 1" class="example-additional-selection" style="color: black">
+            (+{{applications.value.length - 1}} {{applications.value?.length === 2 ? 'autre' : 'autres'}})
+          </span>
+                        </mat-select-trigger>
+                        <mat-option style="background-color: lightgray; font-size: 14px; color: black"
+                                    [value]="application.value" *ngFor="let application of applicationList">
+                            {{ application.value }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+
+            <div class="w-full aspect-w-1 h-14 bg-gray-200 rounded-lg overflow-hidden xl:aspect-w-11/12 xl:h-16">
+                <mat-form-field appearance="outline" class="w-full h-full object-center object-cover">
+                    <mat-label class="text-black text-center ml-2">
+                        Id commerçant, n° série TPE, Id monétique ou n° rang
+                    </mat-label>
+                    <input style="color: black" matInput type="search" [(ngModel)]="searchValue" [formControl]="selection"
+                           (keydown.enter)="getAll(range.value, applications.value, selection.value, status.value)">
+                    <button class="bg-lime-500" *ngIf="searchValue" matSuffix mat-icon-button aria-label="Clear" (click)="searchValue=''">
+                        <mat-icon>close</mat-icon>
+                    </button>
+                </mat-form-field>
+            </div>
+
+            <div class="w-full aspect-w-1 aspect-h-1 bg-gray-200 rounded-lg overflow-hidden xl:aspect-w-11/12 xl:aspect-h-16"
+                 style="height: 70px">
+                <div class="w-full h-full object-center object-cover group-hover:opacity-75">
+                    <h3 class="text-black text-center">Statut TLC</h3>
+                    <section [formGroup]="status">
+                        <mat-checkbox color="primary"  class="ml-20 text-black" formControlName="ok" 
+                                      (keydown.enter)="getAll(range.value, applications.value, selection.value, status.value)">OK
+                        </mat-checkbox>
+                        <mat-checkbox color="primary" class="ml-20 text-black" formControlName="ko"
+                                      (keydown.enter)="getAll(range.value, applications.value, selection.value, status.value)">KO
+                        </mat-checkbox>
+                    </section>
+                </div>
+            </div>
+
+            <div class="w-full aspect-w-1 h-12 bg-gray-200 rounded-lg overflow-hidden xl:w-11/12 xl:h-16">
+                <button mat-flat-button class="bg-lime-500 w-full h-full object-center object-cover"
+                (click)="getAll(range.value, applications.value, selection.value, status.value)">
+                    Rechercher
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>

@@ -1,0 +1,63 @@
+﻿# This script can be used to bootstrap development dependencies.
+
+version: "3.8"
+
+services:
+
+  bigmom-postgres:
+    image: postgres:13.1
+    ports:
+      - "25432:5432"
+    environment:
+      - POSTGRES_USER=bigmom
+      - POSTGRES_PASSWORD=Pass@word1
+      - POSTGRES_DB=bigmom
+    volumes:
+      - type: bind
+        source: $CI_PROJECT_DIR/docker/postgres/init_schema.sql
+        target: /docker-entrypoint-initdb.d/init_schema.sql
+      - type: bind
+        source: $CI_PROJECT_DIR/docker/postgres/init_schema_migration.sql
+        target: /docker-entrypoint-initdb.d/init_schema_migration.sql
+    restart: unless-stopped
+    networks:
+      - intranet
+
+  bigmom-elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.13.3
+    ports:
+      - "9200:9200"
+    environment:
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    restart: unless-stopped
+    networks:
+      - intranet
+
+  bigmom-kafka:
+    image: lensesio/fast-data-dev:latest
+    ports:
+      - "2181:2181"
+      - "3030:3030"
+      - "8081-8083:8081-8083"
+      - "9581-9585:9581-9585"
+      - "9092:9092"
+    environment:
+      - ADV_HOST=$KAFKA_ADV_HOST
+    restart: unless-stopped
+    networks:
+      - intranet
+
+  bigmom-openssh-server:
+    image: ghcr.io/linuxserver/openssh-server
+    ports:
+      - "2222:2222"
+    environment:
+      - SUDO_ACCESS=true
+      - PASSWORD_ACCESS=true
+      - USER_NAME=bigmom
+      - USER_PASSWORD=Pass@word1
+    restart: unless-stopped
+
+networks:
+  intranet:

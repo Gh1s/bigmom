@@ -1,0 +1,85 @@
+﻿# This script can be used to bootstrap the integration stack on the local environment.
+
+version: "3.8"
+
+services:
+
+  bigmom-postgres:
+    image: postgres:13.1
+    ports:
+      - "25432:5432"
+    environment:
+      - POSTGRES_USER=bigmom
+      - POSTGRES_PASSWORD=Pass@word1
+      - POSTGRES_DB=bigmom
+    volumes:
+      - type: bind
+        source: ./postgres/init_schema.sql
+        target: /docker-entrypoint-initdb.d/init_schema.sql
+      - type: bind
+        source: ./postgres/init_schema_migration.sql
+        target: /docker-entrypoint-initdb.d/init_schema_migration.sql
+    restart: unless-stopped
+    networks:
+      - intranet
+
+  bigmom-elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.13.3
+    ports:
+      - "9200:9200"
+    environment:
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    restart: unless-stopped
+    networks:
+      - intranet
+
+  bigmom-kafka:
+    image: lensesio/fast-data-dev:latest
+    ports:
+      - "2181:2181"
+      - "3030:3030"
+      - "8081-8083:8081-8083"
+      - "9581-9585:9581-9585"
+      - "9092:9092"
+    environment:
+      - ADV_HOST=bigmom-kafka
+    restart: unless-stopped
+    networks:
+      - intranet
+
+  bigmom-job-integration:
+    build:
+      # You can override the build context (where the source code is) by defining a JOB_INTEGRATION_BUILD_CONTEXT environment variable.
+      context: ${JOB_INTEGRATION_BUILD_CONTEXT:-../}
+      dockerfile: src/Csb.BigMom.Job/Dockerfile
+      args:
+        # Make sure that you have defined the HTTP_PROXY environment variable on your host.
+        - HTTP_PROXY=$HTTP_PROXY
+        - HTTPS_PROXY=$HTTP_PROXY
+    image: repository.csb.nc:5011/bigmom/jobs/integration:${JOB_INTEGRATION_TAG:-latest}
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Local
+      - ASPNETCORE_URLS=http://+:6350
+      - Serilog__Elasticsearch__Url=${SERILOG_ELASTICSEARCH_URL:-https://admin:pass4admin@192.168.201.236:9200}
+    volumes:
+      - type: bind
+        source: ./job-integration/appsettings.Local.json
+        target: /app/appsettings.Local.json
+      - type: bind
+        source: ../data/insert_mcc.sql
+        target: /tmp/scripts/insert_mcc.sql
+    deploy:
+      replicas: 3
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "-k", "http://localhost:6350/health"]
+      start_period: 60s
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    networks:
+      - intranet
+
+networks:
+  intranet:

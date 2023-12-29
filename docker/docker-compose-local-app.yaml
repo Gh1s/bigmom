@@ -1,0 +1,83 @@
+﻿# This script can be used to bootstrap the integration stack on the local environment.
+
+version: "3.8"
+
+services:
+
+#  bigmom-api:
+#    build:
+#      # You can override the build context (where the source code of the stores is) by defining a API_BUILD_CONTEXT environment variable.
+#      context: ${API_BUILD_CONTEXT:-../}
+#      dockerfile: src/Csb.BigMom.Api/Dockerfile
+#      args:
+#        # Make sure that you have defined the HTTP_PROXY environment variable on your host.
+#        - http_proxy=$HTTP_PROXY
+#        - HTTPS_PROXY=$HTTP_PROXY
+#    image: repository.csb.nc:5011/bigmom/api:${API_TAG:-latest}
+#    ports:
+#      - "6250:6250"
+#    environment:
+#      - ASPNETCORE_ENVIRONMENT=Local
+#      - ASPNETCORE_URLS=https://+:6250
+#      - ASPNETCORE_Kestrel__Certificates__Default__Path=/etc/ssl/certs/tls.pfx
+#      - ASPNETCORE_Kestrel__Certificates__Default__Password=Pass@word1
+#      - Serilog__Elasticsearch__Url=${SERILOG_ELASTICSEARCH_URL:-https://admin:pass4admin@192.168.201.236:9200}
+#    volumes:
+#      - type: bind
+#        source: ./api/appsettings.Local.json
+#        target: /app/appsettings.Local.json
+#      - type: bind
+#        source: ./certs/tls-host-docker.pfx
+#        target: /etc/ssl/certs/tls.pfx
+#    restart: unless-stopped
+#    healthcheck:
+#      test: ["CMD", "curl", "-f", "-k", "https://localhost:6250/health"]
+#      start_period: 60s
+#      interval: 30s
+#      timeout: 5s
+#      retries: 3
+#    networks:
+#      - intranet
+
+  bigmom-app:
+#    build:
+#      # You can override the build context (where the source code of the stores is) by defining a APP_BUILD_CONTEXT environment variable.
+#      context: ${APP_BUILD_CONTEXT:-../}
+#      dockerfile: src/Csb.BigMom.App/Dockerfile
+#      args:
+#        # Make sure that you have defined the HTTP_PROXY environment variable on your host.
+#        - http_proxy=$HTTP_PROXY
+#        - HTTPS_PROXY=$HTTP_PROXY
+    #image: repository.csb.nc:5011/bigmom/app:${APP_TAG:-latest}
+    image: repository.csb.nc:5011/bigmom/app:023
+    ports:
+      - "6300:6300"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Local
+      - ASPNETCORE_URLS=https://+:6300
+#      - HTTP_PROXY="http://proxy.csb.local:3128"
+#      - HTTPS_PROXY="http://proxy.csb.local:3128"
+#      - NO_PROXY="127.0.0.1,192.168.*.*,172.19.*.*,172.30.*.*,172.31.*.*,172.27.*.*,172.17.*.*,10.99.*.*,*.csb.nc*"
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/etc/ssl/certs/aspnetapp.pfx
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=madinina
+      - Serilog__Elasticsearch__Url=${SERILOG_ELASTICSEARCH_URL:-https://admin:pass4admin@192.168.201.236:9200}
+    volumes:
+      - type: bind
+        source: ./app/appsettings.Local.json
+        target: /app/appsettings.Local.json
+      - type: bind
+        source: ./conf.d/https/aspnetapp.pfx
+        target: /etc/ssl/certs/aspnetapp.pfx
+        
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "-k", "https://localhost:6300/health"]
+      start_period: 60s
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    networks:
+      - intranet
+
+networks:
+  intranet:

@@ -1,0 +1,24 @@
+debug_log: false
+
+kafka:
+  consumers:
+    maj_jcb_request:
+      bootstrap_servers: "kafka:9092"
+      topic: "bigmom.spreading.requests.process"
+      auto_offset_reset: "earliest"
+      group_id: "bigmom-job-spread-jcb"
+      auto_commit: False
+      auto_commit_interval_ms: 1000
+      max_poll_interval_ms: 600000
+  producers:
+    maj_jcb_response:
+      bootstrap_servers: "kafka:9092"
+      topic: "bigmom.spreading.responses.process"
+
+osb:
+  repertoire: "/tmp/out/"
+  nom_fichier: "jcb_file_"
+  extension_fichier: ".txt"
+
+job_properties:
+  job_jcb_property: 'job-spread-jcb'

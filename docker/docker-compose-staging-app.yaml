@@ -1,0 +1,88 @@
+﻿# This script can be used to bootstrap the integration stack on the staging environment.
+
+version: "3.8"
+
+services:
+
+#  bigmom-api:
+#    user: $UID:$GID
+#    container_name: bigmom-api
+#    image: repository.csb.nc:5011/bigmom/api:${API_TAG:-latest}
+#    environment:
+#      - ASPNETCORE_ENVIRONMENT=Staging
+#      - ASPNETCORE_URLS=http://+:6250
+#      - Serilog__Elasticsearch__Url=${SERILOG_ELASTICSEARCH_URL:-https://admin:pass4admin@192.168.201.236:9200}
+#    volumes:
+#      - type: bind
+#        source: /csb/bigmom/api/appsettings.Staging.json
+#        target: /app/appsettings.Staging.json
+#    restart: unless-stopped
+#    healthcheck:
+#      test: ["CMD", "curl", "-f", "http://localhost:6250/health"]
+#      start_period: 60s
+#      interval: 30s
+#      timeout: 5s
+#      retries: 3
+
+  bigmom-app:
+    user: $UID:$GID
+    container_name: bigmom-app
+    #image: repository.csb.nc:5011/bigmom/app:${APP_TAG:-latest}
+    image: repository.csb.nc:5011/bigmom/app:011
+    ports:
+      - "6300:6300"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Staging
+      - ASPNETCORE_URLS=https://+:6300
+      - HTTP_PROXY="http://proxy.csb.local:3128"
+      - HTTPS_PROXY="http://proxy.csb.local:3128"
+      - NO_PROXY="127.0.0.1,192.168.*.*,172.19.*.*,172.30.*.*,172.31.*.*,172.27.*.*,172.17.*.*,10.99.*.*,*.csb.nc*"
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/etc/ssl/certs/aspnetapp.pfx
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=madinina
+      - Serilog__Elasticsearch__Url=${SERILOG_ELASTICSEARCH_URL:-https://admin:pass4admin@192.168.201.236:9200}
+    volumes:
+      - type: bind
+        #source: /csb/bigmom/app/appsettings.Staging.json
+        source: ../src/Csb.BigMom.App/appsettings.json
+        target: /app/appsettings.Staging.json
+      - type: bind
+        source: ./conf.d/https/aspnetapp.pfx
+        target: /etc/ssl/certs/aspnetapp.pfx
+#      - type: bind
+#        source: /c/Users/grandg/AppData/Local/ASP.NET/DataProtection-Keys/
+#        target: /root/.aspnet/DataProtection-Keys/  
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:6300/health"]
+      start_period: 60s
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  bigmom-gateway:
+    image: nginx:1.19.5-alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+    - type: bind
+      source: ./app/nginx/nginx.conf
+      target: /etc/nginx/nginx.conf
+    - type: bind
+      source: ./certs/tls-wildcard.crt
+      target: /etc/ssl/certs/tls-wildcard.crt
+    - type: bind
+      source: ./certs/tls-wildcard.key
+      target: /etc/ssl/certs/tls-wildcard.key
+#    - type: bind
+#      source: /csb/certs/tls-wildcard.pass
+#      target: /etc/ssl/certs/tls-wildcard.pass
+    restart: unless-stopped
+    depends_on:
+    #- bigmom-api
+      - bigmom-app
+
+networks:
+  default:
+    external:
+      name: intranet

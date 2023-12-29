@@ -1,0 +1,89 @@
+﻿# This script can be used to start build the Docker images of the BigMom stack.
+
+version: "3.8"
+
+services:
+
+  bigmom-api:
+    build:
+      # You can override the build context (where the source code is) by defining a API_BUILD_CONTEXT environment variable.
+      context: ${API_BUILD_CONTEXT:-../}
+      dockerfile: src/Csb.BigMom.Api/Dockerfile
+      args:
+        # Make sure that you have defined the HTTP_PROXY environment variable on your host.
+        - HTTP_PROXY=$HTTP_PROXY
+        - HTTPS_PROXY=$HTTP_PROXY
+    image: ${REGISTRY:-repository.csb.nc:5011}/${API_REPOSITORY:-bigmom/api}:${API_TAG:-latest}
+
+  # bigmom-app:
+  #   build:
+  #     # You can override the build context (where the source code is) by defining a APP_BUILD_CONTEXT environment variable.
+  #     context: ${APP_BUILD_CONTEXT:-../}
+  #     dockerfile: src/Csb.BigMom.App/Dockerfile
+  #     args:
+  #       # Make sure that you have defined the HTTP_PROXY environment variable on your host.
+  #       - HTTP_PROXY=$HTTP_PROXY
+  #       - HTTPS_PROXY=$HTTP_PROXY
+  #   image: ${REGISTRY:-repository.csb.nc:5011}/${APP_REPOSITORY:-bigmom/app}:${APP_TAG:-latest}
+
+  bigmom-job-integration:
+    build:
+      # You can override the build context (where the source code is) by defining a JOB_INTEGRATION_BUILD_CONTEXT environment variable.
+      context: ${JOB_INTEGRATION_BUILD_CONTEXT:-../}
+      dockerfile: src/Csb.BigMom.Job/Dockerfile
+      args:
+        # Make sure that you have defined the HTTP_PROXY environment variable on your host.
+        - HTTP_PROXY=$HTTP_PROXY
+        - HTTPS_PROXY=$HTTP_PROXY
+    image: ${REGISTRY:-repository.csb.nc:5011}/${JOB_INTEGRATION_REPOSITORY:-bigmom/jobs/integration}:${JOB_INTEGRATION_TAG:-latest}
+
+  bigmom-job-extract:
+    build:
+      # You can override the build context (where the source code is) by defining a JOB_COLLECTOR_BUILD_CONTEXT environment variable.
+      context: ${JOB_EXTRACT_BUILD_CONTEXT:-../talend/}
+      dockerfile: Dockerfile
+    image: ${REGISTRY:-repository.csb.nc:5011}/${JOB_EXTRACT_REPOSITORY:-bigmom/jobs/extract}:${JOB_EXTRACT_TAG:-latest}
+
+  bigmom-job-collector:
+    build:
+      # You can override the build context (where the source code is) by defining a JOB_COLLECTOR_BUILD_CONTEXT environment variable.
+      context: ${JOB_COLLECTOR_BUILD_CONTEXT:-../scripts/}
+      dockerfile: collector/Dockerfile
+      args:
+        # Make sure that you have defined the HTTP_PROXY environment variable on your host.
+        - HTTP_PROXY=$HTTP_PROXY
+        - HTTPS_PROXY=$HTTP_PROXY
+    image: ${REGISTRY:-repository.csb.nc:5011}/${JOB_COLLECTOR_REPOSITORY:-bigmom/jobs/collector}:${JOB_COLLECTOR_TAG:-latest}
+
+  bigmom-job-spread-pwc:
+    build:
+      # You can override the build context (where the source code is) by defining a JOB_SPREAD_PWC_BUILD_CONTEXT environment variable.
+      context: ${JOB_SPREAD_PWC_BUILD_CONTEXT:-../scripts/}
+      dockerfile: spread_pwc/Dockerfile
+      args:
+        # Make sure that you have defined the HTTP_PROXY environment variable on your host.
+        - HTTP_PROXY=$HTTP_PROXY
+        - HTTPS_PROXY=$HTTP_PROXY
+    image: ${REGISTRY:-repository.csb.nc:5011}/${JOB_SPREAD_PWC_REPOSITORY:-bigmom/jobs/spread-pwc}:${JOB_SPREAD_PWC_TAG:-latest}
+
+  bigmom-job-spread-amx:
+    build:
+      # You can override the build context (where the source code is) by defining a JOB_SPREAD_AMX_BUILD_CONTEXT environment variable.
+      context: ${JOB_SPREAD_AMX_BUILD_CONTEXT:-../}
+      dockerfile: src/Csb.BigMom.Spreading.Amx.Job/Dockerfile
+      args:
+        # Make sure that you have defined the HTTP_PROXY environment variable on your host.
+        - HTTP_PROXY=$HTTP_PROXY
+        - HTTPS_PROXY=$HTTP_PROXY
+    image: ${REGISTRY:-repository.csb.nc:5011}/${JOB_SPREAD_AMX_REPOSITORY:-bigmom/jobs/spread-amx}:${JOB_SPREAD_AMX_TAG:-latest}
+
+  bigmom-job-spread-jcb:
+    build:
+      # You can override the build context (where the source code is) by defining a JOB_SPREAD_JCB_BUILD_CONTEXT environment variable.
+      context: ${JOB_SPREAD_JCB_BUILD_CONTEXT:-../}
+      dockerfile: src/Csb.BigMom.Spreading.Jcb.Job/Dockerfile
+      args:
+        # Make sure that you have defined the HTTP_PROXY environment variable on your host.
+        - HTTP_PROXY=$HTTP_PROXY
+        - HTTPS_PROXY=$HTTP_PROXY
+    image: ${REGISTRY:-repository.csb.nc:5011}/${JOB_SPREAD_JCB_REPOSITORY:-bigmom/jobs/spread-jcb}:${JOB_SPREAD_JCB_TAG:-latest}

@@ -1,0 +1,20 @@
+debug_log: true
+
+kafka:
+  producers:
+    integration_commerce_request:
+      bootstrap_servers: "172.18.0.3:9092"
+      topic: "bigmom.integration.commerce.requests.process"
+      max_request_size: 5242880
+
+collector:
+  json:
+    files:
+      #commerce: "talend/out/export_Commerce.json"
+      #contrat: "talend/out/export_CommerceAppli.json"
+      #tpe: "talend/out/export_CommerceTPE.json"
+      commerce: "C:\\Users\\grandg\\Desktop\\tests\\export_Commerce.json"
+      contrat: "C:\\Users\\grandg\\Desktop\\tests\\export_CommerceAppli.json"
+      tpe: "C:\\Users\\grandg\\Desktop\\tests\\export_CommerceTPE.json"
+  exclusion_list_type_tpe: ["3", "4", "5", "7", "8", "17"]
+  nb_process: 3

@@ -1,0 +1,41 @@
+<mat-sidenav-container class="h-full w-full">
+    <mat-sidenav #drawer  fixedInViewport mode="over" class="bg-slate-400"
+                 [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'">
+        <mat-toolbar class="bg-slate-400">
+            <button (click)="showFiller = !showFiller" >
+            </button>
+        </mat-toolbar>
+        <img class="ml-12 bg-slate-200" src="assets/images/logo_csb.jpg" style="width: 130px; height: 65px">
+        <mat-nav-list style="margin-top: 20%">
+            <a mat-list-item href="#" class="mt-6">
+                <img src="../../../assets/images/outline_fact_check_black_48dp.png" class="mr-5 h-20 sm:h-9" alt="traces"/>
+                Suivi des traitements
+            </a>
+            <a mat-list-item href="#" class="my-4">
+                <img src="../../../assets/images/outline_storefront_black_48dp.png" class="mr-6 h-20 sm:h-9" alt="graphiques"/>
+                Graphiques
+            </a>
+            <a mat-list-item href="#" class="my-4">
+                <img src="../../../assets/images/outline_fact_check_black_48dp.png" class="mr-6 h-10 sm:h-9" alt="commerce" />
+                Commerçants
+            </a>
+            <a mat-list-item href="#" class="my-4">
+                <img src="../../../assets/images/outline_point_of_sale_black_48dp.png" class="mr-6 h-20 sm:h-9" alt="tpe" />
+                Télécollectes
+            </a>
+        </mat-nav-list>
+    </mat-sidenav>
+    <mat-sidenav-content class="bg-white">
+        <mat-toolbar class="bg-lime-500 w-fit rounded-lg">
+            <button
+                    type="button"
+                    aria-label="Toggle sidenav"
+                    mat-icon-button
+                    (click)="drawer.toggle()">
+                <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
+            </button>
+            <p class="text-center text-3xl font-sans" style="margin-left: 37%; margin-right: 63%">Supervision des télécollectes</p>
+        </mat-toolbar>
+        <app-table></app-table>
+    </mat-sidenav-content>
+</mat-sidenav-container>

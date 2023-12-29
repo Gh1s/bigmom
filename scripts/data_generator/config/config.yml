@@ -1,0 +1,14 @@
+debug_log: false
+
+db:
+  host: localhost
+  port: 25432
+  database: bigmom
+  user: bigmom
+  password: Pass@word1
+
+kafka:
+  producers:
+    tlc_index_request:
+      bootstrap_servers: "localhost:9092"
+      topic: "bigmom.index.tlc.requests.process"

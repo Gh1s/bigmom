@@ -1,0 +1,92 @@
+[
+  {
+    "identifiant": "0000001",
+    "nom": "Commerce 1",
+    "email": "commerce1@csb.nc",
+    "ef": "17499",
+    "date_affiliation": "2021-01-01",
+    "date_resiliation": null,
+    "mcc": { "code": "0001" }
+  },
+  {
+    "identifiant": "0000002",
+    "nom": "Commerce 2",
+    "email": "commerce2@csb.nc",
+    "ef": "17499",
+    "date_affiliation": "2021-01-01",
+    "date_resiliation": null,
+    "mcc": { "code": "0001" }
+  },
+  {
+    "identifiant": "0000003",
+    "nom": "Commerce 3",
+    "email": "commerce3@csb.nc",
+    "ef": "17499",
+    "date_affiliation": "2021-01-01",
+    "date_resiliation": "2021-01-31",
+    "mcc": { "code": "0001" }
+  },
+  {
+    "identifiant": "0000004",
+    "nom": "Commerce 4",
+    "email": "commerce4@csb.nc",
+    "ef": "14889",
+    "date_affiliation": "2021-01-01",
+    "date_resiliation": null,
+    "mcc": { "code": "0001" }
+  },
+  {
+    "identifiant": "0000005",
+    "nom": "Commerce 5",
+    "email": "commerce5@csb.nc",
+    "ef": "14889",
+    "date_affiliation": "2021-01-01",
+    "date_resiliation": null,
+    "mcc": { "code": "0001" }
+  },
+  {
+    "identifiant": "0000006",
+    "nom": "Commerce 6",
+    "email": "commerce6@csb.nc",
+    "ef": "14889",
+    "date_affiliation": "2021-01-01",
+    "date_resiliation": "2021-01-31",
+    "mcc": { "code": "0001" }
+  },
+  {
+    "identifiant": "0000007",
+    "nom": "Commerce 7",
+    "email": "commerce7@csb.nc",
+    "ef": "14158",
+    "date_affiliation": "2021-01-01",
+    "date_resiliation": null,
+    "mcc": { "code": "0002" }
+  },
+  {
+    "identifiant": "0000008",
+    "nom": "Commerce 8",
+    "email": "commerce8@csb.nc",
+    "ef": "14158",
+    "date_affiliation": "2021-01-01",
+    "date_resiliation": null,
+    "mcc": { "code": "0002" }
+  },
+  {
+    "identifiant": "0000009",
+    "nom": "Commerce 9",
+    "email": "commerce9@csb.nc",
+    "ef": "14158",
+    "date_affiliation": "2021-01-01",
+    "date_resiliation": null,
+    "mcc": { "code": "0002" }
+  },
+  {
+    "identifiant": "0000010",
+    "nom": "Commerce 10",
+    "email": "commerce10@csb.nc",
+    "ef": "14158",
+    "date_affiliation": "2021-01-01",
+    "date_resiliation": null,
+    "mcc": { "code": "0002" }
+  }
+]

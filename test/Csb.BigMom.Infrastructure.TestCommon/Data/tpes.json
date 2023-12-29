@@ -1,0 +1,144 @@
+[
+  {
+    "no_serie": "TPE001",
+    "no_site": "001",
+    "modele": "Unknown",
+    "statut": "Actif",
+    "commerce": { "identifiant": "0000001" }
+  },
+  {
+    "no_serie": "TPE002",
+    "no_site": "002",
+    "modele": "Unknown",
+    "statut": "Actif",
+    "commerce": { "identifiant": "0000001" }
+  },
+  {
+    "no_serie": "TPE003",
+    "no_site": "003",
+    "modele": "Unknown",
+    "statut": "Actif",
+    "commerce": { "identifiant": "0000001" }
+  },
+  {
+    "no_serie": "TPE004",
+    "no_site": "001",
+    "modele": "Unknown",
+    "statut": "Actif",
+    "commerce": { "identifiant": "0000002" }
+  },
+  {
+    "no_serie": "TPE005",
+    "no_site": "001",
+    "modele": "Unknown",
+    "statut": "Inactif",
+    "commerce": { "identifiant": "0000003" }
+  },
+  {
+    "no_serie": "TPE006",
+    "no_site": "001",
+    "modele": "Unknown",
+    "statut": "Actif",
+    "commerce": { "identifiant": "0000004" }
+  },
+  {
+    "no_serie": "TPE007",
+    "no_site": "002",
+    "modele": "Unknown",
+    "statut": "Actif",
+    "commerce": { "identifiant": "0000004" }
+  },
+  {
+    "no_serie": "TPE008",
+    "no_site": "003",
+    "modele": "Unknown",
+    "statut": "Actif",
+    "commerce": { "identifiant": "0000004" }
+  },
+  {
+    "no_serie": "TPE009",
+    "no_site": "001",
+    "modele": "Unknown",
+    "statut": "Actif",
+    "commerce": { "identifiant": "0000005" }
+  },
+  {
+    "no_serie": "TPE010",
+    "no_site": "001",
+    "modele": "Unknown",
+    "statut": "Inactif",
+    "commerce": { "identifiant": "0000006" }
+  },
+  {
+    "no_serie": "TPE011",
+    "no_site": "001",
+    "modele": "Unknown",
+    "statut": "Actif",
+    "commerce": { "identifiant": "0000007" }
+  },
+  {
+    "no_serie": "TPE012",
+    "no_site": "002",
+    "modele": "Unknown",
+    "statut": "Actif",
+    "commerce": { "identifiant": "0000007" }
+  },
+  {
+    "no_serie": "TPE013",
+    "no_site": "003",
+    "modele": "Unknown",
+    "statut": "Actif",
+    "commerce": { "identifiant": "0000007" }
+  },
+  {
+    "no_serie": "TPE014",
+    "no_site": "001",
+    "modele": "Unknown",
+    "statut": "Actif",
+    "commerce": { "identifiant": "0000008" }
+  },
+  {
+    "no_serie": "TPE015",
+    "no_site": "001",
+    "modele": "Unknown",
+    "statut": "Inactif",
+    "commerce": { "identifiant": "0000009" }
+  },
+  {
+    "no_serie": "TPE016",
+    "no_site": "001",
+    "modele": "Unknown",
+    "statut": "Actif",
+    "commerce": { "identifiant": "0000009" }
+  },
+  {
+    "no_serie": "TPE017",
+    "no_site": "001",
+    "modele": "Unknown",
+    "statut": "Actif",
+    "commerce": { "identifiant": "0000010" }
+  },
+  {
+    "no_serie": "TPE018",
+    "type_connexion": "RTC",
+    "no_site": "001",
+    "modele": "Unknown",
+    "statut": "Actif",
+    "commerce": { "identifiant": "0000010" }
+  },
+  {
+    "no_serie": "TPE019",
+    "no_site": "001",
+    "modele": "Unknown",
+    "statut": "Actif",
+    "commerce": { "identifiant": "0000010" }
+  },
+  {
+    "no_serie": "TPE020",
+    "type_connexion": "RTC",
+    "no_site": "001",
+    "modele": "Unknown",
+    "statut": "Actif",
+    "commerce": { "identifiant": "0000010" }
+  }
+]

@@ -1,0 +1,30 @@
+﻿# This script can be used to bootstrap the extract job on the local environment.
+
+version: "3.8"
+
+services:
+
+  bigmom-job-extract:
+    build:
+      context: ../talend/
+      dockerfile: Dockerfile
+    image: repository.csb.nc:5011/bigmom/jobs/extract:${JOB_EXTRACT_TAG:-latest}
+    volumes:
+      - type: bind
+        source: $SITPE_INPUT_FILE
+        target: /tmp/SITPE.accdb
+      - type: bind
+        source: ../talend/out/
+        target: /tmp/out/
+      - type: bind
+        source: ./job-extract/exporttojson_0_1/contexts/Local.properties
+        target: /talend/Enchainement_v2/bom_tpe/exporttojson_0_1/contexts/Default.properties
+      - type: bind
+        source: ./job-extract/getdatafromsource_v3_0_1/contexts/Local.properties
+        target: /talend/Enchainement_v2/bom_tpe/getdatafromsource_v3_0_1/contexts/Default.properties
+    restart: "no"
+    networks:
+      - intranet
+
+networks:
+  intranet:

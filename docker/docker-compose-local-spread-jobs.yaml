@@ -1,0 +1,85 @@
+﻿# This script can be used to bootstrap the spread jobs on the local environment.
+
+version: "3.8"
+
+services:
+
+  bigmom-job-spread-pwc:
+    build:
+      # You can override the build context (where the source code is) by defining a JOB_SPREAD_PWC_BUILD_CONTEXT environment variable.
+      context: ${JOB_SPREAD_PWC_BUILD_CONTEXT:-../scripts/}
+      dockerfile: spread_pwc/Dockerfile
+      args:
+        # Make sure that you have defined the HTTP_PROXY environment variable on your host.
+        - HTTP_PROXY=$HTTP_PROXY
+        - HTTPS_PROXY=$HTTP_PROXY
+    image: repository.csb.nc:5011/bigmom/jobs/spread-pwc:${JOB_SPREAD_PWC_TAG:-latest}
+    environment:
+      - CONFIG_PATH=/scripts/spread_pwc/config/config.yaml
+    volumes:
+      - type: bind
+        source: ./job-spread-pwc/config.yaml
+        target: /scripts/spread_pwc/config/config.yaml
+    restart: unless-stopped
+    networks:
+      - intranet
+
+  bigmom-job-spread-amx:
+    build:
+      # You can override the build context (where the source code is) by defining a JOB_SPREAD_AMX_BUILD_CONTEXT environment variable.
+      context: ${JOB_SPREAD_AMX_BUILD_CONTEXT:-../}
+      dockerfile: src/Csb.BigMom.Spreading.Amx.Job/Dockerfile
+      args:
+        # Make sure that you have defined the HTTP_PROXY environment variable on your host.
+        - HTTP_PROXY=$HTTP_PROXY
+        - HTTPS_PROXY=$HTTP_PROXY
+    image: repository.csb.nc:5011/bigmom/jobs/spread-amx:${JOB_SPREAD_AMX_TAG:-latest}
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Staging
+      - ASPNETCORE_URLS=http://+:6450
+      - Serilog__Elasticsearch__Url=${SERILOG_ELASTICSEARCH_URL:-https://admin:pass4admin@192.168.201.236:9200}
+    volumes:
+      - type: bind
+        source: ./job-spread-amx/appsettings.Local.json
+        target: /app/appsettings.Local.json
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "-k", "http://localhost:6450/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    networks:
+      - intranet
+
+  bigmom-job-spread-jcb:
+    build:
+      # You can override the build context (where the source code is) by defining a JOB_SPREAD_JCB_BUILD_CONTEXT environment variable.
+      context: ${JOB_SPREAD_JCB_BUILD_CONTEXT:-../}
+      dockerfile: src/Csb.BigMom.Spreading.Jcb.Job/Dockerfile
+      args:
+        # Make sure that you have defined the HTTP_PROXY environment variable on your host.
+        - HTTP_PROXY=$HTTP_PROXY
+        - HTTPS_PROXY=$HTTP_PROXY
+    image: repository.csb.nc:5011/bigmom/jobs/spread-jcb:${JOB_SPREAD_JCB_TAG:-latest}
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Staging
+      - ASPNETCORE_URLS=http://+:6500
+      - Serilog__Elasticsearch__Url=${SERILOG_ELASTICSEARCH_URL:-https://admin:pass4admin@192.168.201.236:9200}
+    volumes:
+      - type: bind
+        source: ./job-spread-jcb/appsettings.Local.json
+        target: /app/appsettings.Local.json
+      - type: bind
+        source: ./job-spread-jcb/out/
+        target: /tmp/out
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "-k", "http://localhost:6500/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    networks:
+      - intranet
+
+networks:
+  intranet:

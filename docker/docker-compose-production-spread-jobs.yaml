@@ -1,0 +1,79 @@
+﻿# This script can be used to bootstrap the spread jobs on the production environment.
+
+version: "3.8"
+
+services:
+
+  bigmom-job-spread-pwc:
+    user: $UID:$GID
+    image: repository.csb.nc:5011/bigmom/jobs/spread-pwc:${JOB_SPREAD_PWC_TAG:-latest}
+    environment:
+      - CONFIG_PATH=/scripts/spread_pwc/config/config.yaml
+    volumes:
+      - type: bind
+        source: /csb/bigmom/job-spread-pwc/config.yaml
+        target: /scripts/spread_pwc/config/config.yaml
+    deploy:
+      replicas: 3
+      resources:
+        limits:
+          memory: 256M
+    restart: unless-stopped
+  
+  bigmom-job-spread-amx:
+    user: $UID:$GID
+    image: repository.csb.nc:5011/bigmom/jobs/spread-amx:${JOB_SPREAD_AMX_TAG:-latest}
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:6450
+      - Serilog__Elasticsearch__Url=$SERILOG_ELASTICSEARCH_URL
+    volumes:
+      - type: bind
+        source: /csb/bigmom/job-spread-amx/appsettings.Production.json
+        target: /app/appsettings.Production.json
+    deploy:
+      replicas: 3
+      resources:
+        reservations:
+          memory: 128M
+        limits:
+          memory: 256M
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:6450/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  bigmom-job-spread-jcb:
+    user: $UID:$GID
+    image: repository.csb.nc:5011/bigmom/jobs/spread-jcb:${JOB_SPREAD_JCB_TAG:-latest}
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:6500
+      - Serilog__Elasticsearch__Url=$SERILOG_ELASTICSEARCH_URL
+    volumes:
+      - type: bind
+        source: /csb/bigmom/job-spread-jcb/appsettings.Production.json
+        target: /app/appsettings.Production.json
+      - type: bind
+        source: /csb/bigmom/job-spread-jcb/out/
+        target: /tmp/out
+    deploy:
+      replicas: 3
+      resources:
+        reservations:
+          memory: 128M
+        limits:
+          memory: 256M
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:6500/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+networks:
+  default:
+    external:
+      name: intranet

@@ -1,0 +1,31 @@
+﻿# This script can be used to bootstrap the collector job on the local environment.
+
+version: "3.8"
+
+services:
+
+  bigmom-job-collector:
+    build:
+      # You can override the build context (where the source code is) by defining a JOB_COLLECTOR_BUILD_CONTEXT environment variable.
+      context: ${JOB_COLLECTOR_BUILD_CONTEXT:-../scripts/}
+      dockerfile: collector/Dockerfile
+      args:
+        # Make sure that you have defined the HTTP_PROXY environment variable on your host.
+        - HTTP_PROXY=$HTTP_PROXY
+        - HTTPS_PROXY=$HTTP_PROXY
+    image: repository.csb.nc:5011/bigmom/jobs/collector:${JOB_COLLECTOR_TAG:-latest}
+    environment:
+      - CONFIG_PATH=/scripts/collector/config/config.yaml
+    volumes:
+      - type: bind
+        source: ./job-collector/config.yaml
+        target: /scripts/collector/config/config.yaml
+      - type: bind
+        source: ../talend/out/
+        target: /scripts/collector/files/
+    restart: "no"
+    networks:
+      - intranet
+
+networks:
+  intranet:

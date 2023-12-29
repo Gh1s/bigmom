@@ -1,0 +1,47 @@
+[
+  {
+    "commerce_id": "3260001",
+    "no_serie_tpe": "84616252",
+    "no_site_tpe": "001",
+    "application_code": "EMV",
+    "heure_tlc": "2021-04-12T05:13",
+    "idsa": "00000288",
+    "ef": "018319"
+  },
+  {
+    "commerce_id": "3256970",
+    "no_serie_tpe": "23944065",
+    "no_site_tpe": "002",
+    "application_code": "NFC",
+    "heure_tlc": "",
+    "idsa": "00000179",
+    "ef": "018319"
+  },
+  {
+    "commerce_id": "8910442",
+    "no_serie_tpe": "",
+    "no_site_tpe": "01",
+    "application_code": "JADE",
+    "heure_tlc": "0825",
+    "idsa": "",
+    "ef": "014889"
+  },
+  {
+    "commerce_id": "8960001",
+    "no_serie_tpe": "",
+    "no_site_tpe": "01",
+    "application_code": "JADE",
+    "heure_tlc": "0825",
+    "idsa": "",
+    "ef": "014889"
+  },
+  {
+    "commerce_id": "3256970",
+    "no_serie_tpe": "10956827",
+    "no_site_tpe": "001",
+    "application_code": "NFC",
+    "heure_tlc": "2021-04-12T05:13",
+    "idsa": "00000285",
+    "ef": "018319"
+  }
+]

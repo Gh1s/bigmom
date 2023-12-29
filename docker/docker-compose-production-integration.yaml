@@ -1,0 +1,39 @@
+﻿# This script can be used to bootstrap the integration stack on the proruction environment.
+
+version: "3.8"
+
+services:
+
+  bigmom-job-integration:
+    user: $UID:$GID
+    image: repository.csb.nc:5011/bigmom/jobs/integration:${JOB_INTEGRATION_TAG:-latest}
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:6350
+      - ConnectionStrings__BigMomContext=$CONNECTIONSTRINGS_BIGMOMCONTEXT
+      - Serilog__Elasticsearch__Url=$SERILOG_ELASTICSEARCH_URL
+    volumes:
+      - type: bind
+        source: /csb/bigmom/job-integration/appsettings.Production.json
+        target: /app/appsettings.Production.json
+      - type: bind
+        source: /csb/bigmom/job-integration/data/insert_mcc.sql
+        target: /tmp/scripts/insert_mcc.sql
+    deploy:
+      replicas: 3
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 128M
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:6350/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+networks:
+  default:
+    external:
+      name: intranet

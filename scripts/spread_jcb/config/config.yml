@@ -1,0 +1,31 @@
+debug_log: false
+
+kafka:
+  consumers:
+    maj_jcb_request:
+      bootstrap_servers: "localhost:9092"
+      topic: "bigmom.spreading.requests.process"
+      auto_offset_reset: "earliest"
+      group_id: "bigmom-job-spread-jcb"
+      auto_commit: False
+      auto_commit_interval_ms: 1000
+      max_poll_interval_ms: 600000
+  producers:
+    maj_jcb_response:
+      bootstrap_servers: "localhost:9092"
+      topic: "bigmom.spreading.responses.process"
+
+osb:
+  repertoire: "out"
+  nom_fichier: "jcb_file_"
+  extension_fichier: ".txt"
+
+job_properties:
+  job_jcb_property: 'job-spread-jcb'
+
+ace_bdd:
+  hostname: "192.168.201.201"
+  username: "oracle"
+  password: "oraexpa1"
+  oracle_env: ". /home/oracle/.bash_profile ; "
+  timeout: 10

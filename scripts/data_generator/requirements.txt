@@ -1,0 +1,3 @@
+Faker==9.8.0
+psycopg2==2.9.1
+PyYAML==5.4.1

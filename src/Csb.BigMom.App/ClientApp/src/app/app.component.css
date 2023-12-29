@@ -1,0 +1,91 @@
+@media (min-width: 1008px) {
+  .logo-csb {
+    width: 120px;
+    height: 70px;
+    border-radius: 10%;
+    overflow: hidden;
+    margin-top: -6px;
+    float: left;
+  }
+  .app-title {
+    display: flex;
+    justify-content: center;
+    text-space: 1px;
+    border-radius: 10px;
+    text-align: center;
+    color: floralwhite;
+    margin: auto;
+    margin-left: 15px;
+    background-color: #77b918;
+    background-size: 50% 50%;
+    width: 92%;
+    height: 80%;
+    padding-top: 1%;
+  }
+  .mat-toolbar {
+    background-color: white;
+    text-justify: auto;
+    text-align: center;
+    height: 90px;
+  }
+  .app-content {
+    background-color: white;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 1007px) {
+  .logo-csb {
+    width: 110px;
+    height: 60px;
+    border-radius: 10%;
+    overflow: hidden;
+    margin-top: -6px;
+    float: left;
+  }
+  .app-title {
+    display: flex;
+    justify-content: center;
+    border-radius: 10px;
+    text-align: center;
+    color: white;
+    margin: auto;
+    margin-left: 15px;
+    background-color: #77b918;
+    background-size: 50% 50%;
+    width: 92%;
+    height: 60px;
+    padding-top: 1%;
+  }
+  .mat-toolbar {
+    background-color: white;
+    text-justify: auto;
+    text-align: center;
+    height: 82px;
+  }
+  .app-content {
+    background-color: white;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+  }
+}
+
+.example-container {
+  width: 100%;
+  height: 100%;
+  border: 1px solid rgba(0, 0, 0, 0.5);
+}
+
+.example-sidenav-content {
+  display: flex;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+}
+
+.example-sidenav {
+  padding: 20px;
+}

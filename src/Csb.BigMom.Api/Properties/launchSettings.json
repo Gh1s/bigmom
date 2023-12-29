@@ -1,0 +1,12 @@
+﻿{
+  "profiles": {
+    "Csb.BigMom.Api": {
+      "commandName": "Project",
+      "dotnetRunMessages": "true",
+      "applicationUrl": "https://localhost:6250",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}

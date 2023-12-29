@@ -1,0 +1,66 @@
+debug_log: false
+
+kafka:
+  consumers:
+    maj_powercard_request:
+      bootstrap_servers: 'localhost:9092'
+      topic: 'bigmom.spreading.requests.process'
+      group_id: 'bigmom-job-spread-pwc'
+      auto_offset_reset: 'earliest'
+      auto_commit: False
+      auto_commit_interval_ms: 1000
+      max_poll_interval_ms: 600000
+    data_powercard_request:
+      bootstrap_servers: 'localhost:9092'
+      topic: 'bigmom.data.requests.process'
+      group_id: 'bigmom-job-spread-pwc'
+      auto_offset_reset: 'earliest'
+      auto_commit: False
+      auto_commit_interval_ms: 1000
+      max_poll_interval_ms: 600000
+  producers:
+    maj_powercard_response:
+      bootstrap_servers: 'localhost:9092'
+      topic: 'bigmom.spreading.responses.process'
+    data_powercard_response:
+      bootstrap_servers: 'localhost:9092'
+      topic: 'bigmom.data.responses.process'
+
+oracle:
+  server: '192.168.212.44'
+  port: '2321'
+  service: 'pcard'
+  user: 'usr_pcard'
+  password: 'pcard001'
+
+pwc:
+  bancaire_apps:
+    - EMV
+    - NFC
+    - VAD
+    - JADE2
+  privative_apps:
+    - JADE
+  forced_dld_type: '21'
+  default_terminal_version: '0000'
+  profiles:
+    emv:
+    - '0001'
+    - '0004'
+    - '0005'
+    - '0007'
+    - '0011'
+    - '0012'
+    - '0013'
+    - '0016'
+    - '0017'
+    - '0021'
+    - '0022'
+    nfc:
+    - '0024'
+    vad:
+    - '0002'
+    - '0014'
+
+job_properties:
+  job_pwc_property: 'job-spread-pwc'

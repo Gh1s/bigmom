@@ -1,0 +1,17 @@
+debug_log: false
+
+kafka:
+  producers:
+    integration_commerce_request:
+      bootstrap_servers: "bigmom-kafka:9092"
+      topic: "bigmom.integration.commerce.requests.process"
+      max_request_size: 5242880
+
+collector:
+  json:
+    files:
+      commerce: "/scripts/collector/files/export_Commerce.json"
+      contrat: "/scripts/collector/files/export_CommerceAppli.json"
+      tpe: "/scripts/collector/files/export_CommerceTPE.json"
+  exclusion_list_type_tpe: ["3", "4", "5", "7", "8", "17"]
+  nb_process: 3
